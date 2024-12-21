@@ -35,8 +35,8 @@ class FavoriteDatasource {
     }
   }
 
-  Future<FavoritesResponsesModelPost?> createFavorite(FavoritesResponsesModelPost data
-  ) async {
+  Future<FavoritesResponsesModelPost?> createFavorite(
+      FavoritesResponsesModelPost data) async {
     try {
       final response = await _httpManager.restRequest(
         url: ApiConstants.favoriteGetEndpoint,
@@ -44,22 +44,20 @@ class FavoriteDatasource {
         body: data.toJson(),
       );
 
-      
-      if (response['statusCode'] == 200 ) {
-      PrintLog.printLog("getFavorite Datasource response: ${response}");
+      if (response['statusCode'] == 200) {
+        PrintLog.printLog("getFavorite Datasource response: ${response}");
         return FavoritesResponsesModelPost.fromJson(response['data']);
       } else {
-        PrintLog.printLog("creatFavorite Datasource response: $(response['statusmessage'])");
-      return null;
-    }
-  } catch (e) {
-    throw Exception('failed to load  create Favorite');
+        PrintLog.printLog(
+            "creatFavorite Datasource response: ${response['statusmessage']}");
+        return null;
+      }
+    } catch (e) {
+      throw Exception('failed to load  create Favorite');
     }
   }
 
-
-Future<FavoritesResponseModelDelete?> deleteFavorite(int favoriteId)
-  async {
+  Future<FavoritesResponseModelDelete?> deleteFavorite(int favoriteId) async {
     try {
       final response = await _httpManager.restRequest(
         url: ApiConstants.favByIdGetEndpoint(favoriteId),
@@ -71,24 +69,25 @@ Future<FavoritesResponseModelDelete?> deleteFavorite(int favoriteId)
       final statusMessage = response['statusMessage'];
 
       if (message == 'SUCCES' || statusMessage == 'OK') {
-        if (response['data'] !=null && response['data'] is Map<String, dynamic>) {
-            return FavoritesResponseModelDelete.fromJson(response['data']);
+        if (response['data'] != null &&
+            response['data'] is Map<String, dynamic>) {
+          return FavoritesResponseModelDelete.fromJson(response['data']);
         } else {
-          return FavoritesResponseModelDelete(message: message ?? "SUCCES",
+          return FavoritesResponseModelDelete(
+            message: message ?? "SUCCES",
           );
         }
       } else {
-        PrintLog.printLog('deleteFavorite Datasource response: ${statusMessage ?? "Unknown Error"}');
+        PrintLog.printLog(
+            'deleteFavorite Datasource response: ${statusMessage ?? "Unknown Error"}');
         return null;
       }
-      } catch (e) {
-        PrintLog.printLog("delete Favorite Datasource response: $e");
-      }
+    } catch (e) {
+      PrintLog.printLog("delete Favorite Datasource response: $e");
     }
-  
+  }
 
-Future<FavoritesResponsesModelSearch?> searchFavorite(int favoriteId)
-  async {
+  Future<FavoritesResponsesModelSearch?> searchFavorite(int favoriteId) async {
     try {
       final response = await _httpManager.restRequest(
         url: ApiConstants.favByIdGetEndpoint(favoriteId),
@@ -96,11 +95,13 @@ Future<FavoritesResponsesModelSearch?> searchFavorite(int favoriteId)
         useAuth: true,
       );
 
-      if(response['statusCode'] == 200) {
-        PrintLog.printLog('searchFavorite Datasource response: ${response['data']}');
+      if (response['statusCode'] == 200) {
+        PrintLog.printLog(
+            'searchFavorite Datasource response: ${response['data']}');
         return FavoritesResponsesModelSearch.fromJson(response['data']);
       } else {
-        PrintLog.printLog('searchFavorite DataSource failed: ${response['statusMessage']}');
+        PrintLog.printLog(
+            'searchFavorite DataSource failed: ${response['statusMessage']}');
         return null;
       }
     } catch (e) {
