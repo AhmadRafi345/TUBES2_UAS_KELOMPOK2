@@ -14,19 +14,15 @@ class BreedsDatasource {
         useAuth: true,
 
       );
-      // PrintLog.printLog("getImages Datasource response : ${response}");
+      PrintLog.printLog("getImages Datasource response : ${response}");
 
       if (response['statusCode'] == 200) {
         final List<dynamic> data = response['data'];
 
-        if (data is List) {
-          return data
-              .map((imageData) => BreedsResponsesModel.fromJson(imageData))
-              .toList();
-        }else {
-          throw Exception('Data format error: Excepted a list');
-        }
-      }else {
+        return data
+            .map((imageData) => BreedsResponsesModel.fromJson(imageData))
+            .toList();
+            }else {
         throw Exception('Failed to load breeds : ${response['statusMessage']}');
       }
     }catch (e) {

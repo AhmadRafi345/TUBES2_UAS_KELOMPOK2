@@ -6,9 +6,9 @@ class FavoriteRequestsModel {
   FavoriteRequestsModel({required this.imageId, required this.subId});
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image_id'] = this.imageId;
-    data['sub_id'] = this.subId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['image_id'] = imageId;
+    data['sub_id'] = subId;
     return data;
   }
 }

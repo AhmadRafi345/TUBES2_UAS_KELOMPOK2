@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:tubes2_uas_kelompok2/core/utils/print_log.dart';
 
 abstract class HttpMethods {
   static const String post = "POST";
@@ -31,6 +32,8 @@ class HttpManager {
 
       //   PrintLog.printLog('Using API key: $apiKey');
 
+      PrintLog.printLog("cek api dan token$apiKey");
+      
       // Add the x-api-key to the headers
       headersDefault['x-api-key'] = apiKey;
 
