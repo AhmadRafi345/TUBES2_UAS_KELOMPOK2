@@ -1,7 +1,7 @@
 import 'package:cat_app/core/const';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/main_menu_controller.dart';
+import '../controller/main_menu_controller1.dart';
 
 // ignore: use_key_in_widget_constructors
 class BottomNavBarWidget extends StatelessWidget {
