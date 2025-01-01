@@ -119,7 +119,7 @@ class VoteScreen extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final vote = controller.searchResult[index];
-          return VoteCard(
+          return VoteCardview(
             vote: vote,
             onDelete: () {
               controller.deleteVote(vote.id);
