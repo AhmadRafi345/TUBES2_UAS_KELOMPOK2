@@ -1,0 +1,107 @@
+import 'package:flutter/material.dart';
+
+class Bread {
+  final String name;
+  final double price;
+
+  Bread({required this.name, required this.price});
+}
+
+class BreadDataSource {
+  Future<List<Bread>> fetchBreads() async {
+    await Future.delayed(Duration(seconds: 2));
+    return [
+      Bread(name: 'Baguette', price: 2.5),
+      Bread(name: 'Ciabatta', price: 3.0),
+      Bread(name: 'Sourdough', price: 4.0),
+    ];
+  }
+}
+
+class HomeController {
+  final BreadDataSource _dataSource;
+
+  HomeController(this._dataSource);
+
+  Future<List<Bread>> getBreadDataSource() async {
+    try {
+      return await _dataSource.fetchBreads();
+    } catch (e) {
+      print('Error fetching breads: $e');
+      return [];
+    }
+  }
+}
+
+class HomeCardWidget extends StatelessWidget {
+  final Bread bread;
+
+  const HomeCardWidget({required this.bread, Key? key}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              bread.name,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            Text('\$${bread.price.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 16, color: Colors.grey[600])),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final HomeController _controller = HomeController(BreadDataSource());
+  late Future<List<Bread>> _breadFuture;
+
+  void initState() {
+    super.initState();
+    _breadFuture = _controller.getBreadDataSource();
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Screen'),
+      ),
+      body: FutureBuilder<List<Bread>>(
+        future: _breadFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No breads available.'));
+          } else {
+            final breads = snapshot.data!;
+            return ListView.builder(
+              itemCount: breads.length,
+              itemBuilder: (context, index) {
+                return HomeCardWidget(bread: breads[index]);
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+void main() => runApp(MaterialApp(home: HomeScreen()));
