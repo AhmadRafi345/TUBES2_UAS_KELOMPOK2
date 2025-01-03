@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+
+class Bread {
+  final String name;
+  final double price;
+  final bool isFavorite;
+
+  Bread({required this.name, required this.price, this.isFavorite = false});
+}
+
+class FavCardWidget extends StatelessWidget {
+  final Bread bread;
+  final VoidCallback onFavoriteToggle;
+
+  const FavCardWidget({required this.bread, required this.onFavoriteToggle, Key? key}) : super(key: key);
+
+  
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    bread.name,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    '\$${bread.price.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                bread.isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: bread.isFavorite ? Colors.red : Colors.grey,
+              ),
+              onPressed: onFavoriteToggle,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: FavCardScreen(),
+    );
+  }
+}
+
+class FavCardScreen extends StatefulWidget {
+ 
+  _FavCardScreenState createState() => _FavCardScreenState();
+}
+
+class _FavCardScreenState extends State<FavCardScreen> {
+  final List<Bread> _breads = [
+    Bread(name: 'Baguette', price: 2.5),
+    Bread(name: 'Ciabatta', price: 3.0),
+    Bread(name: 'Sourdough', price: 4.0),
+  ];
+
+  void _toggleFavorite(int index) {
+    setState(() {
+      _breads[index] = Bread(
+        name: _breads[index].name,
+        price: _breads[index].price,
+        isFavorite: !_breads[index].isFavorite,
+      );
+    });
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Favorite Breads'),
+      ),
+      body: ListView.builder(
+        itemCount: _breads.length,
+        itemBuilder: (context, index) {
+          return FavCardWidget(
+            bread: _breads[index],
+            onFavoriteToggle: () => _toggleFavorite(index),
+          );
+        },
+      ),
+    );
+  }
+}
