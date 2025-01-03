@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+
+// Mock class to represent bread data
+class Bread {
+  final String name;
+  final double price;
+
+  Bread({required this.name, required this.price});
+}
+
+// Data source for bread items
+class BreadDataSource {
+  Future<List<Bread>> fetchBreads() async {
+    // Simulate network delay
+    await Future.delayed(Duration(seconds: 2));
+
+    // Example data
+    return [
+      Bread(name: 'Baguette', price: 2.5),
+      Bread(name: 'Ciabatta', price: 3.0),
+      Bread(name: 'Sourdough', price: 4.0),
+    ];
+  }
+}
+
+// HomeController to manage fetching data and state
+class HomeController {
+  final BreadDataSource _dataSource;
+
+  HomeController(this._dataSource);
+
+  Future<List<Bread>> getBreadDataSource() async {
+    try {
+      final breads = await _dataSource.fetchBreads();
+      return breads;
+    } catch (e) {
+      print('Error fetching bread data: $e');
+      return [];
+    }
+  }
+}
+
+// Example usage in a Flutter app
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final HomeController _controller = HomeController(BreadDataSource());
+  late Future<List<Bread>> _breadFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _breadFuture = _controller.getBreadDataSource();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Bread List')),
+      body: FutureBuilder<List<Bread>>(
+        future: _breadFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No breads available'));
+          } else {
+            final breads = snapshot.data!;
+            return ListView.builder(
+              itemCount: breads.length,
+              itemBuilder: (context, index) {
+                final bread = breads[index];
+                return ListTile(
+                  title: Text(bread.name),
+                  subtitle: Text('\$${bread.price.toStringAsFixed(2)}'),
+                );
+              },
+            );
+          }
+        },
+      ),
+    );
+  }
+}
